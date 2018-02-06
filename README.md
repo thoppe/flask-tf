@@ -1,8 +1,10 @@
 # tfFlask
 
-A simple way to serve your tensorflow models with flask.
+A simple way to serve your [tensorflow](https://github.com/tensorflow/tensorflow) models with [flask](http://flask.pocoo.org/).
 
-```
+Start a server and run a model:
+
+```python
 import tensorflow as tf
 from tfFlask import tfFlask
 
@@ -17,7 +19,7 @@ tfFlask.run()
 
 With the server running,
 
-```
+```python
 import requests
 url = "http://127.0.0.1:5000/feed"
 args = {"x":3, "y":4, "target":"z"}
