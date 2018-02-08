@@ -1,39 +1,47 @@
 import pylru
 import tensorflow as tf
-
-'''
-def L2norm():
-    x = tf.placeholder(tf.float32, shape=(None,), name='x')
-    z = tf.add(x,x,name='z')
-    #tf.norm(x, name='z')
-'''
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def scalar_add():
-    x = tf.placeholder(tf.float32, name='x')
-    y = tf.placeholder(tf.float32, name='y')
+    x = tf.placeholder(tf.float32)
+    y = tf.placeholder(tf.float32)
+    z = tf.add(x, y)
+    return {'x':x, 'y':y, 'z':z}
+
+def vector_add():
+    x = tf.placeholder(tf.float32, shape=(None,))
+    y = tf.placeholder(tf.float32, shape=(None,))
     z = tf.add(x,y,name='z')
+    return {'x':x, 'y':y, 'z':z}
+
+def L2norm():
+    x = tf.placeholder(tf.float32, shape=(None,))
+    return {'x':x, 'z':tf.norm(x)}
+
 
 class tfModel(object):
 
     def __init__(self, model_func):
          config = tf.ConfigProto()
          config.gpu_options.allow_growth = True
-         with tf.Graph().as_default() as self.g:
-             self.sess = tf.Session(config=config)
-             model_func()
-             #print self.g.get_operation_by_name('z')
-             #print [x.name for x in self.sess.graph.get_operations()]
-             #print [n.name for n in tf.get_default_graph().as_graph_def().node]
-             #exit()
+         self.sess = tf.InteractiveSession(config=config)
+         self.g = tf.get_default_graph()
+         
+         self.var = model_func()
+         if not self.var:
+             raise Warning("No variables returned by model function.")
+         
+         self.sess.run(tf.global_variables_initializer())
 
-    def __getitem__(self, key, loc=0):
 
+    def __getitem__(self, key):
         try:
-            val = self.g.get_tensor_by_name("{}:{}".format(key, loc))
+            return self.var[key]
         except KeyError:
-            msg = "{}:{} is not defined in the model"
-            raise KeyError(msg.format(key,loc))
-        return val
+            msg = "{} is not defined in the model"
+            raise KeyError(msg.format(key))
+
 
     @pylru.lrudecorator(128)
     def get_info(self, name):
@@ -52,12 +60,22 @@ class tfModel(object):
         result = self.sess.run(target_vars, feed_dict=feed_dict)
         return dict(zip(targets, result))
         
-from tqdm import tqdm
+if __name__ == "__main__":
     
-T = tfModel(scalar_add)
-print T.get_info('x')
-print T.get_info('z')
+    T = tfModel(scalar_add)
+    print T('z', x=2, y=3)
+    # KeyError 'q', not in the graph
+    # T['q']
 
-print T('z', x=2, y=3)
-exit()
+    T = tfModel(vector_add)
+    print T('z', x=[2,3], y=[4,5])
+
+    T = tfModel(L2norm)
+    print T('z', x=[1,2,3])
+
+    # ValueError (wrong shape!)
+    # print T('z', x=1)
+
+
+
 
