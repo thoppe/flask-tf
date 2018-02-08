@@ -1,7 +1,11 @@
 import tensorflow as tf
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 
 _MODEL = None
+
+def _get_tensor(name):
+    g = tf.get_default_graph()
+    return g.get_tensor_by_name("{}:0".format(name))
 
 def tf_coroutine(model_func):
 
@@ -17,13 +21,16 @@ def tf_coroutine(model_func):
 
             feed_dict = {}
             for k,v in in_args.items():
-                x = g.get_tensor_by_name("{}:0".format(k))
+                x = _get_tensor(k)
+                print x, x.dtype
+                print k,v
+                exit()
                 feed_dict[x] = v
 
 
             run_vars = []
             for k in out_args:
-                x = g.get_tensor_by_name("{}:0".format(k))
+                x = _get_tensor(k)
                 run_vars.append(x)
             
             res = sess.run(run_vars, feed_dict=feed_dict)
@@ -34,14 +41,14 @@ class tfFlask_caller(object):
 
     def __init__(self, model_func):
         self.f = tf_coroutine(model_func)
+        next(self.f)
         
     def __call__(self, target, **feed_dict):
         '''
         Calls a single target
         '''
-        next(self.f)
-
         res = self.f.send([feed_dict, [target,]])
+        next(self.f)
                 
         # Convert to native python types before returning
         return [x.item() for x in res][0]
@@ -59,7 +66,16 @@ def index():
     msg = '''Endpoints:\n/feed'''
     return msg.strip()
 
-@app.route('/feed', methods=['POST'])
+@app.route('/check', methods=['POST'])
+def check():
+    js = request.json
+    if not js: abort(400)
+    for name in js:
+        print _get_tensor(name)
+        
+    return jsonify(js), 200
+
+@app.route('/predict', methods=['POST'])
 def process():
     global _MODEL
     assert(_MODEL is not None)

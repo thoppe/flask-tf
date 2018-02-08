@@ -3,23 +3,6 @@ import tensorflow as tf
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-def scalar_add():
-    x = tf.placeholder(tf.float32)
-    y = tf.placeholder(tf.float32)
-    z = tf.add(x, y)
-    return {'x':x, 'y':y, 'z':z}
-
-def vector_add():
-    x = tf.placeholder(tf.float32, shape=(None,))
-    y = tf.placeholder(tf.float32, shape=(None,))
-    z = tf.add(x,y,name='z')
-    return {'x':x, 'y':y, 'z':z}
-
-def L2norm():
-    x = tf.placeholder(tf.float32, shape=(None,))
-    return {'x':x, 'z':tf.norm(x)}
-
-
 class tfModel(object):
 
     def __init__(self, model_func):
@@ -61,7 +44,24 @@ class tfModel(object):
         return dict(zip(targets, result))
         
 if __name__ == "__main__":
-    
+
+    def scalar_add():
+        x = tf.placeholder(tf.float32)
+        y = tf.placeholder(tf.float32)
+        z = tf.add(x, y)
+        return {'x':x, 'y':y, 'z':z}
+
+    def vector_add():
+        x = tf.placeholder(tf.float32, shape=(None,))
+        y = tf.placeholder(tf.float32, shape=(None,))
+        z = tf.add(x,y,name='z')
+        return {'x':x, 'y':y, 'z':z}
+
+    def L2norm():
+        x = tf.placeholder(tf.float32, shape=(None,))
+        return {'x':x, 'z':tf.norm(x)}
+
+
     T = tfModel(scalar_add)
     print T('z', x=2, y=3)
     # KeyError 'q', not in the graph
