@@ -3,8 +3,6 @@ When passed a model def., tfModel creates an object that can be called
 easily. In the future, this will validate input (rank at least!).
 '''
 
-
-
 import pylru
 import tensorflow as tf
 import os
@@ -36,11 +34,13 @@ class tfModel(object):
     @pylru.lrudecorator(128)
     def get_info(self, name):
         x = self[name]
-        return {
-            "name":name,
+        val = {
             "rank":x.get_shape().ndims,
-            "dtype":x.dtype,
+            "dtype":str(x.dtype),
         }
+        if not val['rank']:
+            val['rank'] = 0
+        return val
         
 
     def __call__(self, *targets, **feed_args):
