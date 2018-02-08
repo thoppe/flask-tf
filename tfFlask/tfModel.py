@@ -1,3 +1,10 @@
+'''
+When passed a model def., tfModel creates an object that can be called
+easily. In the future, this will validate input (rank at least!).
+'''
+
+
+
 import pylru
 import tensorflow as tf
 import os
