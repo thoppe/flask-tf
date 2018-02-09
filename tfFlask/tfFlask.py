@@ -1,14 +1,38 @@
 from flask import Flask, request, jsonify, abort
 import StringIO, json
 import numpy as np
+import requests
+import json
+
+#################################################################
+
+class tfFlask(object):
+    def __init__(self):
+        self.url = "http://127.0.0.1:5000/"
+
+    def check(self, *args):
+        url = self.url + 'check'
+        r = requests.post(url, json=args)
+        return json.loads(r.content)
+
+    def serve(self, *targets, **feed_dict):
+        url = self.url + 'serve'
+        files = {'_targets':numpy_pack(targets)}
+        for k,v in feed_dict.items():
+            files[k] = numpy_pack(v)
+            
+        r = requests.post(url, files=files)
+        return numpy_unpack(r.content)
+
+
+#################################################################
 
 _MODEL = None
+
 def register(model):
     global _MODEL
     from tfModel import tfModel
     _MODEL = tfModel(model)
-
-#################################################################
 
 def numpy_unpack(serialized):
     memfile = StringIO.StringIO()
@@ -25,13 +49,11 @@ def numpy_pack(x):
 
 #################################################################
 
-
-
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    msg = '''Endpoints:\n/feed'''
+    msg = '''Endpoints:\n/check\nserve'''
     return msg.strip()
 
 @app.route('/check', methods=['POST'])
@@ -64,21 +86,10 @@ def process():
             targets = numpy_unpack(v.read())
 
     assert(targets is not None)
-    
-    print feed_args
-    print targets
 
     result = _MODEL(*targets, **feed_args)
     serialized = numpy_pack(result)
 
-    print serialized
-    
-    #js = request.json
-    #if not js: abort(400)
-
-    #target = js.pop('target')
-    #result = _MODEL(target, **js)
-    #return jsonify({target:result}), 200
     return serialized, 200
     
 
