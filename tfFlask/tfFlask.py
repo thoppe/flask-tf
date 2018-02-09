@@ -16,6 +16,13 @@ def numpy_unpack(serialized):
     memfile.seek(0)
     return np.load(memfile)
 
+def numpy_pack(x):
+    memfile = StringIO.StringIO()
+    np.save(memfile, x)
+    memfile.seek(0)
+    return memfile.read()
+
+
 #################################################################
 
 
@@ -48,16 +55,31 @@ def process():
     print vars(request)
 
     feed_args = {}
+    targets = None
+    
     for k,v in request.files.items():
-        feed_args[k] = numpy_unpack(v.read())
-    print feed_args  
+        if k != "_targets":
+            feed_args[k] = numpy_unpack(v.read())
+        else:
+            targets = numpy_unpack(v.read())
+
+    assert(targets is not None)
+    
+    print feed_args
+    print targets
+
+    result = _MODEL(*targets, **feed_args)
+    serialized = numpy_pack(result)
+
+    print serialized
+    
     #js = request.json
     #if not js: abort(400)
 
     #target = js.pop('target')
     #result = _MODEL(target, **js)
     #return jsonify({target:result}), 200
-    return jsonify({}), 200
+    return serialized, 200
     
 
 def run():

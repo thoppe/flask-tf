@@ -2,6 +2,7 @@ import requests
 import StringIO
 import json
 import numpy as np
+from tfFlask.tfFlask import numpy_unpack, numpy_pack
 
 url = "http://127.0.0.1:5000/"
 r = requests.get(url)
@@ -13,19 +14,19 @@ args = ['x','z']
 r = requests.post(url, json=args)
 print r.content
 
-A = np.array([1.0,2.0,3])# any NumPy array
-memfile = StringIO.StringIO()
-np.save(memfile, A)
-memfile.seek(0)
-serialized = memfile.read()#.decode('latin-1'))
+
 
 
 ## Need to figure out how to pass vars AND target
+A = np.array([1.0,2.0,3])
+
 url = "http://127.0.0.1:5000/serve"
 targets = ['z']
-r = requests.post(url, files={'x':serialized, 'y':serialized,
-                              'json':(None,json.dumps(targets))})
-print r.content
+r = requests.post(url, files={
+    'x':numpy_pack(A), 
+    '_targets':numpy_pack(['z']),
+})
+print numpy_unpack(r.content)
 
 
 exit()
