@@ -1,20 +1,17 @@
-# tfFlask
+# flask-tf
 
 A simple way to serve your [tensorflow](https://github.com/tensorflow/tensorflow) models with [flask](http://flask.pocoo.org/).
 
 Start a server and run a model:
 
 ```python
-import tensorflow as tf
-from tfFlask import tfFlask
 
-def simple_add():
-    x = tf.placeholder(tf.float32, name='x')
-    y = tf.placeholder(tf.float32, name='y')
-    z = tf.add(x, y, name='z')
+def dot_product():
+    x = tf.placeholder(tf.float32, shape=(None,),name='x')
+    y = tf.placeholder(tf.float32, shape=(None,),name='y')
+    return {'x':x, 'y':y, 'z':tf.tensordot(x,y,1)}
 
-tfFlask.register(simple_add)
-tfFlask.run()
+serve(dot_product)
 ```
 
 With the server running,

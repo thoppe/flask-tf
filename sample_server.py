@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tfFlask import serve
+from flasktf import serve
 
 def scalar_add():
     x = tf.placeholder(tf.float32)
