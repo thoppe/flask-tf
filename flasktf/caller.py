@@ -14,7 +14,7 @@ class caller(object):
         return json.loads(r.content)
 
     def __call__(self, *targets, **feed_dict):
-        url = self.url + 'serve'
+        url = self.url + 'call'
         files = {'_targets': pack(targets)}
         for k, v in feed_dict.items():
             files[k] = pack(v)

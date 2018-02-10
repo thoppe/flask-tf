@@ -5,17 +5,17 @@ from serializers import pack, unpack
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
-    msg = '''Endpoints:\n/check\nserve'''
-    return msg.strip()
+    endpoints = ['info', 'serve']
+    return jsonify(endpoints), 200
 
 
 @app.route('/info', methods=['POST'])
 def info():
     js = request.json
     if not js:
-        return jsonify(MODEL.var.keys()), 200
+        return jsonify(MODEL.get_variables().keys()), 200
 
     data = {}
     for name in js:
@@ -24,8 +24,8 @@ def info():
     return jsonify(data), 200
 
 
-@app.route('/serve', methods=['POST'])
-def process():
+@app.route('/call', methods=['POST'])
+def call():
     assert(MODEL is not None)
 
     feed_args = {}
