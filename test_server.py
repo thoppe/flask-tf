@@ -1,11 +1,13 @@
-from tfFlask.tfFlask import tfFlask
+from flasktf import caller
 import numpy as np
-from tqdm import tqdm
 
-M = tfFlask()
+
+M = caller()
+terms = M.info()
+print M.info(*terms)
 
 N = 100
 x = np.random.uniform(size=(N,))
 y = np.random.uniform(size=(N,))
-print M.serve('z',x=x,y=y)
-print x.dot(y)
+print M('z', x=x, y=y)
+

@@ -1,3 +1,3 @@
-from caller import tfCaller
+from model_session import tfModelSession
 
-MODEL = tfCaller()
+MODEL = tfModelSession()
