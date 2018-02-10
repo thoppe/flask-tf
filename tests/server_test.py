@@ -41,5 +41,5 @@ class Serializer_Test:
         )
 
         processed = json.loads(output.get_data())
-        expected = {"x":{"dtype":"<dtype: 'float32'>","rank":1}}
+        expected = {"x": {"dtype": "<dtype: 'float32'>", "rank": 1}}
         assert_equal(processed, expected)

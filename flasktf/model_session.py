@@ -13,7 +13,7 @@ class tfModelSession(object):
 
     def __init__(self, model_func=None):
         self.sess = None
-        
+
         if model_func is not None:
             self.set_model(model_func)
 
@@ -30,7 +30,7 @@ class tfModelSession(object):
         self.sess.run(tf.global_variables_initializer())
 
     def get_variables(self):
-        if self.sess == None:
+        if self.sess is None:
             raise ValueError("set_model has not been run")
         return self.var
 
