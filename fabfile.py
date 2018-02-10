@@ -2,9 +2,9 @@ from fabric.api import local
 
 
 def test():
-    local("flake8 flasktf tests")
     local("nosetests tests -s --nologcapture --with-coverage "
           "--cover-package flasktf")
+    local("flake8 flasktf tests")
     # local("nosetests --with-coverage --cover-package nlpre --cover-html")
 
 

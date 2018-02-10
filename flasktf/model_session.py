@@ -51,38 +51,3 @@ class tfModelSession(object):
 
         result = self.sess.run(target_vars, feed_dict=feed_dict)
         return dict(zip(targets, result))
-
-if __name__ == "__main__":
-    '''
-    Functions below to be turned into unit tests!
-    '''
-
-    def scalar_add():
-        x = tf.placeholder(tf.float32)
-        y = tf.placeholder(tf.float32)
-        z = tf.add(x, y)
-        return {'x': x, 'y': y, 'z': z}
-
-    def vector_add():
-        x = tf.placeholder(tf.float32, shape=(None,))
-        y = tf.placeholder(tf.float32, shape=(None,))
-        z = tf.add(x, y, name='z')
-        return {'x': x, 'y': y, 'z': z}
-
-    def L2norm():
-        x = tf.placeholder(tf.float32, shape=(None,))
-        return {'x': x, 'z': tf.norm(x)}
-
-    T = tfModelSession(scalar_add)
-    # print T('z', x=2, y=3)
-    # KeyError 'q', not in the graph
-    # T['q']
-
-    T = tfModelSession(vector_add)
-    # print T('z', x=[2, 3], y=[4, 5])
-
-    T = tfModelSession(L2norm)
-    # print T('z', x=[1, 2, 3])
-
-    # ValueError (wrong shape!)
-    # print T('z', x=1)
