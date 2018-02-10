@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-from nose.tools import assert_equal
 from flasktf.serializers import pack, unpack
-
 import numpy as np
 from numpy.testing import assert_array_equal
 
+
 class Serializer_Test:
-    
+
     @classmethod
     def setup_class(cls):
         pass
@@ -20,8 +18,8 @@ class Serializer_Test:
         assert_array_equal(x, unpack(pack(x)))
 
     def numpy_multiarray_test(self):
-        x = np.random.uniform(size=(10,10,10))
-        assert_array_equal(x, unpack(pack(x))) 
+        x = np.random.uniform(size=(10, 10, 10))
+        assert_array_equal(x, unpack(pack(x)))
 
     def python_int_test(self):
         x = 3
