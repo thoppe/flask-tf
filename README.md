@@ -17,10 +17,11 @@ serve(dot_product)
 With the server running,
 
 ```python
-import requests
-url = "http://127.0.0.1:5000/feed"
-args = {"x":3, "y":4, "target":"z"}
-print requests.post(url, json=args).content
 
-# Returns {"z": 7.0}
+from flasktf import caller
+
+model = caller()
+print model('z', x=[1,2,3], y=[0,1,2])
+# Returns {"z": 8.0}
+
 ```
