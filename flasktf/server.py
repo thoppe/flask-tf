@@ -1,16 +1,18 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify
 from default_caller import MODEL
 from serializers import pack, unpack
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def index():
     msg = '''Endpoints:\n/check\nserve'''
     return msg.strip()
 
+
 @app.route('/info', methods=['POST'])
-def info():    
+def info():
     js = request.json
     if not js:
         return jsonify(MODEL.var.keys()), 200
@@ -18,19 +20,18 @@ def info():
     data = {}
     for name in js:
         data[name] = MODEL.get_info(name)
-        
+
     return jsonify(data), 200
+
 
 @app.route('/serve', methods=['POST'])
 def process():
     assert(MODEL is not None)
 
-    print vars(request)
-
     feed_args = {}
     targets = None
-    
-    for k,v in request.files.items():
+
+    for k, v in request.files.items():
         if k != "_targets":
             feed_args[k] = unpack(v.read())
         else:
@@ -42,6 +43,7 @@ def process():
     serialized = pack(result)
 
     return serialized, 200
-    
+
+
 def run():
     app.run(debug=True)
