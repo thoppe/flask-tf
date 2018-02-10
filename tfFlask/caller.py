@@ -1,5 +1,5 @@
 '''
-When passed a model def., tfModel creates an object that can be called
+When passed a model def., caller creates an object that can be called
 easily. In the future, this will validate input (rank at least!).
 '''
 
@@ -8,20 +8,23 @@ import tensorflow as tf
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-class tfModel(object):
+class tfCaller(object):
 
-    def __init__(self, model_func):
-         config = tf.ConfigProto()
-         config.gpu_options.allow_growth = True
-         self.sess = tf.InteractiveSession(config=config)
-         self.g = tf.get_default_graph()
-         
-         self.var = model_func()
-         if not self.var:
-             raise Warning("No variables returned by model function.")
-         
-         self.sess.run(tf.global_variables_initializer())
+    def __init__(self, model_func=None):
+        if model_func is not None:
+            self.set_model(model_func)
 
+    def set_model(self, model_func):
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        self.sess = tf.InteractiveSession(config=config)
+        self.g = tf.get_default_graph()
+        
+        self.var = model_func()
+        if not self.var:
+            raise Warning("No variables returned by model function.")
+         
+        self.sess.run(tf.global_variables_initializer())
 
     def __getitem__(self, key):
         try:
@@ -51,6 +54,9 @@ class tfModel(object):
         return dict(zip(targets, result))
         
 if __name__ == "__main__":
+    '''
+    Functions below to be turned into unit tests!
+    '''
 
     def scalar_add():
         x = tf.placeholder(tf.float32)
@@ -69,15 +75,15 @@ if __name__ == "__main__":
         return {'x':x, 'z':tf.norm(x)}
 
 
-    T = tfModel(scalar_add)
+    T = tfCaller(scalar_add)
     print T('z', x=2, y=3)
     # KeyError 'q', not in the graph
     # T['q']
 
-    T = tfModel(vector_add)
+    T = tfCaller(vector_add)
     print T('z', x=[2,3], y=[4,5])
 
-    T = tfModel(L2norm)
+    T = tfCaller(L2norm)
     print T('z', x=[1,2,3])
 
     # ValueError (wrong shape!)
