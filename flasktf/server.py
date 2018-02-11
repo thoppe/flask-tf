@@ -25,7 +25,7 @@ def info():
 
 
 @app.route('/call', methods=['POST'])
-def call():
+def call():  # pragma: no cover
     assert(MODEL is not None)
 
     feed_args = {}

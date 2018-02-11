@@ -13,7 +13,7 @@ class caller(object):
         r = requests.post(url, json=args)
         return json.loads(r.content)
 
-    def __call__(self, *targets, **feed_dict):
+    def __call__(self, *targets, **feed_dict):  # pragma: no cover
         url = self.url + 'call'
         files = {'_targets': pack(targets)}
         for k, v in feed_dict.items():
