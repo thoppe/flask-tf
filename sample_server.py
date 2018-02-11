@@ -20,4 +20,4 @@ def dot_product():
     return {'x': x, 'y': y, 'z': tf.tensordot(x, y, 1)}
 
 
-serve(dot_product)
+serve(dot_product,debug=False)

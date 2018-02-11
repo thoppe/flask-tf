@@ -1,9 +1,7 @@
-from flasktf import serve, app, caller
+from flasktf import app, caller
 from flasktf.default_caller import MODEL
 from nose.tools import assert_equal
 import json
-
-import numpy as np
 import tensorflow as tf
 
 

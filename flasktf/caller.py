@@ -20,4 +20,7 @@ class caller(object):
             files[k] = pack(v)
 
         r = requests.post(url, files=files)
-        return unpack(r.content)
+        obj = unpack(r.content)
+
+        # Cleanup the numpy cruft
+        return obj.ravel()[0]
