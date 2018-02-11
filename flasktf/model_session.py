@@ -25,7 +25,7 @@ class tfModelSession(object):
 
         self.var = model_func()
         if not self.var:
-            raise Warning("No variables returned by model function.")
+            raise ValueError("No variables returned by model function.")
 
         self.sess.run(tf.global_variables_initializer())
 
@@ -53,8 +53,15 @@ class tfModelSession(object):
         return val
 
     def __call__(self, *targets, **feed_args):
+        if self.sess is None:
+            raise ValueError("set_model has not been run")
+
         feed_dict = {self[k]: v for k, v in feed_args.items()}
         target_vars = [self[k] for k in targets]
 
-        result = self.sess.run(target_vars, feed_dict=feed_dict)
+        try:
+            result = self.sess.run(target_vars, feed_dict=feed_dict)
+        except tf.errors.InvalidArgumentError as Ex:
+            raise(Ex)
+
         return dict(zip(targets, result))

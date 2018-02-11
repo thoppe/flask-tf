@@ -43,7 +43,3 @@ def call():
     serialized = pack(result)
 
     return serialized, 200
-
-
-def run():
-    app.run(debug=True)

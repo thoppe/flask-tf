@@ -1,5 +1,7 @@
-from flasktf.model_session import tfModelSession
+from nose.tools import raises
+from nose.tools import assert_equal
 
+from flasktf.model_session import tfModelSession
 import numpy as np
 import tensorflow as tf
 
@@ -54,3 +56,67 @@ class Serializer_Test:
             result,
             np.linalg.norm(x)
         )
+
+    def rank_test(self):
+        def model():
+            x0 = tf.placeholder(tf.float32)
+            x1 = tf.placeholder(tf.float32, shape=(None,))
+            x2 = tf.placeholder(tf.float32, shape=(None, 10))
+            return {'x0': x0, 'x1': x1, 'x2': x2}
+
+        T = tfModelSession(model)
+        assert_equal(T.get_info('x0')['rank'], 0)
+        assert_equal(T.get_info('x1')['rank'], 1)
+        assert_equal(T.get_info('x2')['rank'], 2)
+
+    @raises(ValueError)
+    def no_vars_in_model_test(self):
+
+        def model():
+            pass
+
+        T = tfModelSession(model)
+        T.get_variables()
+
+    @raises(ValueError)
+    def no_model_set_get_var_test(self):
+        T = tfModelSession()
+        T.get_variables()
+
+    @raises(ValueError)
+    def no_model_set_set_call_test(self):
+        T = tfModelSession()
+        T('z')
+
+    @raises(KeyError)
+    def missing_var_in_index_test(self):
+
+        def model():
+            x = tf.placeholder(tf.float32, shape=(None,))
+            return {'x': x, 'z': tf.norm(x)}
+
+        # There is no variable named q in the model
+        T = tfModelSession(model)
+        T['q']
+
+    @raises(KeyError)
+    def missing_var_in_call_test(self):
+
+        def model():
+            x = tf.placeholder(tf.float32, shape=(None,))
+            return {'x': x, 'z': tf.norm(x)}
+
+        # There is no variable named q in the model
+        T = tfModelSession(model)
+        T('q', x=[1, 2, 3])
+
+    @raises(tf.errors.InvalidArgumentError)
+    def not_enough_info_to_solve_test(self):
+
+        def model():
+            x = tf.placeholder(tf.float32, shape=(None,))
+            return {'x': x, 'z': tf.norm(x)}
+
+        # Model requires 'x'
+        T = tfModelSession(model)
+        T('z')
