@@ -5,6 +5,8 @@ A simple way to serve your [tensorflow](https://github.com/tensorflow/tensorflow
 Start a server and run a model:
 
 ```python
+import tensorflow as tf
+from flasktf import serve
 
 def dot_product():
     x = tf.placeholder(tf.float32, shape=(None,),name='x')
@@ -17,11 +19,9 @@ serve(dot_product)
 With the server running,
 
 ```python
-
 from flasktf import caller
 
 model = caller()
 print model('z', x=[1,2,3], y=[0,1,2])
 # Returns {"z": 8.0}
-
 ```
