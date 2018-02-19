@@ -34,8 +34,20 @@ def sample_model_api(N):
     model = Model(inputs=a, outputs=c)
     return model
 
+def sample_seq_api(N):
+    model = Sequential()
+    model.add( Dense(N, input_shape = (N,)) )
+    model.add( Activation(activation='softmax') )
+    return model
+
+#print sample_seq_api(3)
+#exit()
+
+func = sample_model_api
+func = sample_seq_api
+
 N = 4
-K = kerasModelSession(sample_model_api, N=N)
+K = kerasModelSession(func, N=N)
 x = np.random.uniform(size=(10,N))
 print K(x)
 print K.get_variables()
