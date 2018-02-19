@@ -6,6 +6,8 @@ import time
 import signal
 import os
 
+startup_time = 4.0
+
 
 class Caller_Test:
 
@@ -13,7 +15,7 @@ class Caller_Test:
     def setup_class(cls):
         print("Starting tiny server")
         cls.P = subprocess.Popen(["python", "tests/tiny_server.py"])
-        time.sleep(2)
+        time.sleep(startup_time)
         cls.model = caller()
 
     @classmethod

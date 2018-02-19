@@ -25,3 +25,8 @@ model = caller()
 print model('z', x=[1,2,3], y=[0,1,2])
 # Returns {"z": 8.0}
 ```
+
+
+### Development notes
+
+If tests fail, try increasing `startup_time` in [tests/caller_test.py](tests/caller_test.py).
