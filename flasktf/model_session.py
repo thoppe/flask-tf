@@ -21,7 +21,6 @@ class tfModelSession(object):
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
         self.sess = tf.InteractiveSession(config=config)
-        self.g = tf.get_default_graph()
 
         self.var = model_func()
         if not self.var:
