@@ -72,3 +72,26 @@ class tfModelSession(baseModelSession):
             raise(Ex)
 
         return dict(zip(targets, result))
+
+
+class kerasModelSession(baseModelSession):
+
+    def set_model(self, model_func, *args, **kwargs):
+        self.configTF()
+
+        self.model = model_func(*args, **kwargs)
+
+        # Define the inputs and outputs with generic names
+        self.var = {}
+
+        for n, p in enumerate(self.model.inputs):
+            self.var["input{}".format(n)] = p
+
+        for n, p in enumerate(self.model.outputs):
+            self.var["output{}".format(n)] = p
+
+    def __call__(self, *targets):
+        if self.sess is None:
+            raise ValueError("set_model has not been run")
+
+        return self.model.predict(*targets)

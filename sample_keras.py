@@ -40,11 +40,18 @@ def sample_seq_api(N):
     model.add( Activation(activation='softmax') )
     return model
 
+def sample_softmax(N):
+    a = Input(shape=(N,),)
+    c = Activation(activation='softmax')(a)
+    model = Model(inputs=a, outputs=c)
+    return model
+
 #print sample_seq_api(3)
 #exit()
 
 func = sample_model_api
 func = sample_seq_api
+func = sample_softmax
 
 N = 4
 K = kerasModelSession(func, N=N)

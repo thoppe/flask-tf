@@ -1,9 +1,12 @@
 from nose.tools import raises
 from nose.tools import assert_equal
 
-from flasktf.model_session import tfModelSession
+from flasktf.model_session import tfModelSession, kerasModelSession
 import numpy as np
 import tensorflow as tf
+
+import keras.models
+import keras.layers
 
 
 class Serializer_Test:
@@ -56,6 +59,21 @@ class Serializer_Test:
             result,
             np.linalg.norm(x)
         )
+
+    def keras_softmax_test(self):
+
+        def model(N):
+            x = keras.layers.Input(shape=(N,),)
+            y = keras.layers.Activation(activation='softmax')(x)
+            model = keras.models.Model(inputs=x, outputs=y)
+            return model
+
+        T = kerasModelSession(model, N=5)
+        x = np.array(np.linspace(0, 1, 5),).reshape(1, -1)
+        yx = T(x)
+        yp = np.exp(x) / np.exp(x).sum()
+
+        np.testing.assert_array_almost_equal(yx, yp)
 
     def rank_test(self):
         def model():
