@@ -102,8 +102,13 @@ class Serializer_Test:
         T.get_variables()
 
     @raises(ValueError)
-    def no_model_set_set_call_test(self):
+    def no_model_set_tf_call_test(self):
         T = tfModelSession()
+        T('z')
+
+    @raises(ValueError)
+    def no_model_set_keras_call_test(self):
+        T = kerasModelSession()
         T('z')
 
     @raises(KeyError)
