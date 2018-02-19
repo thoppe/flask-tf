@@ -11,11 +11,11 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class baseModelSession(object):
 
-    def __init__(self, model_func=None):
+    def __init__(self, model_func=None, *args, **kwargs):
         self.sess = None
 
         if model_func is not None:
-            self.set_model(model_func)
+            self.set_model(model_func, *args, **kwargs)
 
     def configTF(self):
         config = tf.ConfigProto()
