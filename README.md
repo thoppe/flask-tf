@@ -26,6 +26,28 @@ print model('z', x=[1,2,3], y=[0,1,2])
 # Returns {"z": 8.0}
 ```
 
+if you prefer [Keras](https://keras.io/), simply return the model and the outputs from a call returned in sequential order:
+
+```python
+import keras.layers, keras.models
+from flasktf import serve
+
+def model(N):
+    x = keras.layers.Input(shape=(N,),)
+    y = keras.layers.Activation(activation='softmax')(x)
+    return keras.models.Model(inputs=x, outputs=y)
+
+serve(dot_product)
+```
+
+```python
+from flasktf import caller
+
+model = caller()
+print model([[1,2,3]])
+# Returns {"z": 8.0}
+```
+
 
 ### Development notes
 

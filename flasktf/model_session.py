@@ -10,6 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 class baseModelSession(object):
+    name = "baseModel"
 
     def __init__(self, model_func=None, *args, **kwargs):
         self.sess = None
@@ -51,6 +52,8 @@ class baseModelSession(object):
 
 class tfModelSession(baseModelSession):
 
+    name = "tfModel"
+
     def set_model(self, model_func):
         self.configTF()
 
@@ -75,6 +78,8 @@ class tfModelSession(baseModelSession):
 
 
 class kerasModelSession(baseModelSession):
+
+    name = "kerasModel"
 
     def set_model(self, model_func, *args, **kwargs):
         self.configTF()
